@@ -1,21 +1,45 @@
-# myShell - Custom Unix-Like Shell with Job Control & Pipelining
+# Custom Unix Shell with Job Control & Pipelining
 
-A fully-featured Unix-like shell implementation in C that demonstrates deep understanding of operating system concepts including process control, inter-process communication, signal handling, and I/O redirection.
+A production-quality Unix-like shell implementation in C demonstrating advanced operating system concepts including process control, inter-process communication, signal handling, and I/O redirection through POSIX system calls.
 
-## 🎯 Features
+## Technical Overview
 
-### Core Functionality
-- ✅ **Command Execution**: Execute standard Unix commands (`ls`, `cat`, `grep`, etc.)
-- ✅ **Pipelining**: Chain multiple commands together (`ls | grep txt | wc -l`)
-- ✅ **I/O Redirection**: Redirect input and output (`cat < input.txt > output.txt`)
-- ✅ **Background Jobs**: Run commands in background (`sleep 10 &`)
-- ✅ **Job Control**: Manage background and foreground jobs (`jobs`, `fg`, `bg`)
-- ✅ **Signal Handling**: Proper handling of Ctrl+C and Ctrl+Z
-- ✅ **Built-in Commands**: `cd`, `exit`, `jobs`, `fg`, `bg`, `help`
-- ✅ **Process Groups**: Proper terminal control and process group management
-- ✅ **Colorized Prompt**: User-friendly prompt showing username, hostname, and current directory
+This project implements a fully functional command-line shell that replicates core functionality of bash/zsh, built from scratch using C and POSIX APIs. The implementation showcases deep systems programming expertise and understanding of operating system internals.
 
-## 🏗️ Architecture
+### Key Capabilities
+
+**Process Management**
+- Command execution via fork() and execvp() system calls
+- Multi-stage pipeline implementation using pipe() and dup2()
+- Foreground and background process scheduling
+- Process group management and terminal control via setpgid() and tcsetpgrp()
+
+**I/O Operations**
+- Input redirection from files (< operator)
+- Output redirection to files (> operator)
+- File descriptor manipulation and duplication
+- Pipeline-based inter-process communication
+
+**Job Control System**
+- Background job execution and tracking
+- Job status monitoring (Running, Stopped, Done)
+- Built-in commands: jobs, fg, bg for job management
+- Automatic zombie process reaping via SIGCHLD handler
+
+**Signal Handling**
+- SIGINT (Ctrl+C) handling for foreground process termination
+- SIGTSTP (Ctrl+Z) handling for process suspension
+- SIGCHLD handler for asynchronous child process cleanup
+- Signal-safe implementations preventing race conditions
+
+**Built-in Commands**
+- cd: Directory navigation with error handling
+- exit: Graceful shell termination
+- jobs: Display active background jobs
+- fg/bg: Foreground/background job control
+- help: Command documentation
+
+## Architecture
 
 ### Project Structure
 ```
@@ -36,36 +60,36 @@ OS/
 └── README.md          # This file
 ```
 
-### Key Components
+### Modular Design
 
-#### 1. Parser Module (`parser.c`)
-- Tokenizes user input into command structures
-- Handles pipe (`|`) detection and splitting
-- Processes I/O redirection (`<`, `>`)
-- Detects background operator (`&`)
-- Builds linked list of command structures for pipelines
+**Parser Module** (`parser.c`)
+- Lexical analysis and tokenization of user input
+- Pipeline detection and command chain construction
+- Redirection operator parsing (< and >)
+- Background execution operator handling (&)
+- Linked list construction for command pipelines
 
-#### 2. Executor Module (`executor.c`)
-- Uses `fork()` to create child processes
-- Uses `execvp()` to execute commands
-- Implements pipeline execution with `pipe()` and `dup2()`
-- Manages file descriptor redirection
-- Handles process groups with `setpgid()` and `tcsetpgrp()`
-- Distinguishes between foreground and background execution
+**Executor Module** (`executor.c`)
+- Process creation via fork() system call
+- Command execution through execvp()
+- Multi-stage pipeline coordination using pipe() and dup2()
+- File descriptor management and redirection
+- Process group creation and terminal control
+- Foreground/background execution logic
 
-#### 3. Job Control Module (`jobs.c`)
-- Maintains linked list of background jobs
-- Tracks job status (Running, Stopped, Done)
-- Implements `jobs`, `fg`, and `bg` built-in commands
-- Cleans up completed jobs with `waitpid(WNOHANG)`
-- Manages job IDs and process group IDs
+**Job Control Module** (`jobs.c`)
+- Linked list-based job tracking data structure
+- Job state management (Running, Stopped, Done)
+- Built-in command implementations (jobs, fg, bg)
+- Non-blocking child process status checking (WNOHANG)
+- Process group ID management and coordination
 
-#### 4. Signal Handler Module (`signals.c`)
-- **SIGCHLD**: Reaps zombie processes automatically
-- **SIGINT** (Ctrl+C): Forwards to foreground process group only
-- **SIGTSTP** (Ctrl+Z): Stops foreground process and adds to job list
-- Prevents shell from being terminated by signals
-- Uses `sigaction()` for reliable signal handling
+**Signal Handler Module** (`signals.c`)
+- SIGCHLD handler for asynchronous zombie process reaping
+- SIGINT handler for foreground process group termination
+- SIGTSTP handler for process suspension and job list addition
+- Shell process protection from user-initiated signals
+- Reliable signal handling via sigaction() API
 
 ## 🔧 System Calls Demonstrated
 
@@ -419,5 +443,6 @@ Created as a comprehensive demonstration of Unix system programming concepts.
 ---
 
 **Note**: This shell is designed for Unix-like systems (Linux, macOS, BSD). It requires POSIX-compliant system calls and will not work natively on Windows (use WSL or a Linux VM).
-#   C u s t o m S h e l l S c r i p t  
+#   C u s t o m S h e l l S c r i p t 
+ 
  
