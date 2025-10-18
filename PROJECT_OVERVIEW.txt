@@ -1,0 +1,243 @@
+
+                    ╔════════════════════════════════════════════════════╗
+                    ║                                                    ║
+                    ║           myShell - Custom Unix Shell             ║
+                    ║        with Job Control & Pipelining              ║
+                    ║                                                    ║
+                    ╚════════════════════════════════════════════════════╝
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                           PROJECT STRUCTURE                                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+    OS/
+    ├── 📁 include/               ─────┐
+    │   ├── shell.h                     │
+    │   ├── parser.h                    ├─── Header Files (5 files)
+    │   ├── executor.h                  │    Core data structures
+    │   ├── jobs.h                      │    Function declarations
+    │   └── signals.h              ─────┘
+    │
+    ├── 📁 src/                   ─────┐
+    │   ├── main.c                      │
+    │   ├── parser.c                    ├─── Source Files (5 files)
+    │   ├── executor.c                  │    ~1000 lines of C code
+    │   ├── jobs.c                      │    All functionality
+    │   └── signals.c              ─────┘
+    │
+    ├── 📄 Makefile               ───── Build automation
+    │
+    ├── 📖 START_HERE.md          ───── Begin here! ⭐
+    ├── 📖 QUICKSTART.md          ───── 5-min setup guide
+    ├── 📖 README.md              ───── Full documentation
+    ├── 📖 DESIGN.md              ───── Architecture details
+    ├── 📖 PROJECT_SUMMARY.md     ───── Project overview
+    ├── 📖 WINDOWS_SETUP.md       ───── Windows/WSL instructions
+    │
+    ├── 🧪 test_shell.sh          ───── Test environment setup
+    ├── 🎬 demo.c                 ───── Interactive demo
+    └── 📋 .gitignore             ───── Git configuration
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                              FEATURES                                       │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+    ✅ Command Execution        →  fork() + execvp()
+    ✅ Pipelines               →  cmd1 | cmd2 | cmd3
+    ✅ I/O Redirection         →  < input.txt > output.txt
+    ✅ Background Jobs         →  long_task &
+    ✅ Job Control             →  jobs, fg, bg
+    ✅ Signal Handling         →  Ctrl+C, Ctrl+Z
+    ✅ Process Groups          →  setpgid, tcsetpgrp
+    ✅ Built-in Commands       →  cd, exit, help
+    ✅ Colorized Prompt        →  [user@host:dir] mysh>
+    ✅ Error Handling          →  Robust throughout
+    ✅ Memory Safe             →  No leaks (valgrind verified)
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                          QUICK START                                        │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+    On Linux/macOS:
+    ───────────────
+        cd OS
+        make
+        ./myShell
+
+    On Windows (WSL):
+    ─────────────────
+        wsl
+        cd /mnt/c/Users/nishp/OneDrive/Desktop/Projects/OS
+        make
+        ./myShell
+
+    First Commands:
+    ───────────────
+        mysh> help
+        mysh> ls | wc -l
+        mysh> echo "test" > file.txt
+        mysh> sleep 5 &
+        mysh> jobs
+        mysh> exit
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                      SYSTEM CALLS USED                                      │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+    Process Control:           I/O Operations:         Signal Handling:
+    ────────────────          ────────────────        ─────────────────
+    • fork()                  • pipe()                • sigaction()
+    • execvp()                • dup2()                • kill()
+    • waitpid()               • open()                • signal()
+    • setpgid()               • close()
+    • tcsetpgrp()             • read()
+                              • write()
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                       ARCHITECTURE                                          │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+        ┌─────────────────────────────────┐
+        │      User Input (Terminal)      │
+        └───────────────┬─────────────────┘
+                        │
+        ┌───────────────▼─────────────────┐
+        │       Main Shell Loop           │
+        │    (main.c - read & dispatch)   │
+        └───────┬─────────────────┬───────┘
+                │                 │
+        ┌───────▼────────┐  ┌─────▼────────┐
+        │     Parser     │  │   Executor   │
+        │   (parser.c)   │  │ (executor.c) │
+        │  Tokenize      │  │  Fork/Exec   │
+        │  Pipes         │  │  Pipelines   │
+        │  Redirects     │  │  Redirects   │
+        └────────────────┘  └─────┬────────┘
+                                  │
+                        ┌─────────▼──────────┐
+                        │    Job Control     │
+                        │     (jobs.c)       │
+                        │   Track jobs       │
+                        │   fg/bg/jobs       │
+                        └─────────┬──────────┘
+                                  │
+                        ┌─────────▼──────────┐
+                        │  Signal Handlers   │
+                        │    (signals.c)     │
+                        │  SIGCHLD/INT/TSTP  │
+                        └────────────────────┘
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                    DOCUMENTATION GUIDE                                      │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+    For Getting Started:
+    ────────────────────
+    1. START_HERE.md      ⭐ Complete overview & next steps
+    2. QUICKSTART.md      🚀 Get running in 5 minutes
+    3. WINDOWS_SETUP.md   💻 Windows/WSL specific help
+
+    For Using the Shell:
+    ────────────────────
+    1. README.md          📖 Full user guide & examples
+    2. test_shell.sh      🧪 Test scenarios & examples
+    3. demo.c             🎬 Interactive demonstration
+
+    For Understanding Design:
+    ─────────────────────────
+    1. DESIGN.md          🏗️  Architecture deep dive
+    2. PROJECT_SUMMARY.md 📊 High-level overview
+    3. Source code        💻 Well-commented code
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                          BUILD COMMANDS                                     │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+    make              Build the shell
+    make clean        Remove build artifacts
+    make rebuild      Clean and rebuild
+    make run          Build and run
+    make debug        Build with debug info
+    make release      Optimized build
+    make valgrind     Check for memory leaks
+    make help         Show all options
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                      TESTING & VALIDATION                                   │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+    Quick Test:                    Comprehensive Test:
+    ───────────                   ──────────────────
+    mysh> ls                      bash test_shell.sh
+    mysh> ls | wc -l              cd /tmp/myshell_test
+    mysh> echo "hi" > test.txt    /path/to/myShell
+    mysh> sleep 5 &               [Follow test scenarios]
+    mysh> jobs
+
+    Debugging:                     Memory Check:
+    ──────────                    ─────────────
+    make debug                    make valgrind
+    gdb ./myShell                 [Verify no leaks]
+    strace ./myShell
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                        PROJECT STATISTICS                                   │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+    Lines of Code:      ~1,000 lines of C
+    Documentation:      ~1,000 lines of Markdown
+    Source Files:       5 modules (main, parser, executor, jobs, signals)
+    Header Files:       5 headers
+    System Calls:       12+ different syscalls
+    Features:           8 major categories
+    Test Scenarios:     50+ test cases
+    Compilation:        Clean with -Wall -Wextra -pedantic
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                        LEARNING OUTCOMES                                    │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+    🎓 Operating System Concepts:
+       • Process creation & management
+       • Inter-process communication
+       • Signal handling & asynchronous events
+       • File descriptor manipulation
+       • Terminal control & job management
+       • Memory management
+
+    💻 Systems Programming Skills:
+       • C programming with POSIX APIs
+       • Error handling in system calls
+       • Modular code architecture
+       • Debugging system-level code
+       • Build automation
+       • Documentation practices
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                          READY TO GO!                                       │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+    ✅ All source code implemented
+    ✅ Complete documentation provided
+    ✅ Test suite included
+    ✅ Build system configured
+    ✅ Windows support documented
+    ✅ Demo program available
+    ✅ Memory-leak free
+    ✅ Compilation warning-free
+
+    Next Step: Read START_HERE.md and build your shell!
+
+                            🚀 Happy Coding! 🐧
+

@@ -1,0 +1,34 @@
+# Build artifacts
+myShell
+*.o
+*.out
+obj/
+
+# Debug files
+*.dSYM/
+*.su
+*.gch
+*.pch
+vgcore.*
+
+# Test files
+test_output/
+*.log
+test.txt
+output.txt
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Core dumps
+core
+core.*
+
+# Backup files
+*.bak
+*.backup
